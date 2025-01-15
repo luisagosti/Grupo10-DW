@@ -1,0 +1,113 @@
+Propriedades de Layout:
+
+    align-items - Alinha os itens num container flexível ao longo do eixo transversal, controlando o alinhamento vertical ou horizontal.
+
+    align-self - Permite ajustar o alinhamento de um item específico dentro de um container flexível ou grid, sobrescrevendo o alinhamento definido pelo container.
+
+    bottom - Define a posição vertical de um elemento em relação ao seu container.
+
+    column-gap - Define o espaço entre as colunas num layout de várias colunas ou num container flexível com elementos em colunas.
+
+    display - Define como um elemento é exibido na página.
+
+    flex-direction - Define a direção dos itens em um container flexível, podendo ser em linha, coluna ou invertido.
+
+    grid - Define um container de grid CSS, permitindo a criação de layouts baseados em linhas e colunas.
+    
+    grid-template-columns - Define o número e o tamanho das colunas em um layout da grid.
+
+    inset - Define a posição de um elemento em relação ao seu container, combinando as propriedades top, right, bottom e left em uma única declaração.
+
+    height - Define a altura de um elemento.
+
+    justify-content - Alinha os itens num container flexível ao longo do eixo principal, controlando a distribuição de espaço entre eles.
+
+    left - Define a posição horizontal de um elemento em relação ao seu container quando o posicionamento é relative, absolute ou fixed.
+
+    margin-bottom - Define o espaço abaixo de um elemento, afastando-o de outros elementos abaixo dele.
+
+    margin-left - Define o espaço à esquerda de um elemento, afastando-o dos elementos adjacentes.
+
+    margin-right - Define o espaço à direita de um elemento, afastando-o dos elementos adjacentes.
+
+    margin - Define o espaço externo entre o elemento e outros elementos.
+
+    max-width - Define a largura máxima de um elemento.
+
+    order - Define a ordem em que os itens aparecem em um container flexível ou grid, independentemente da ordem no código HTML.
+
+    overflow - Controla como o conteúdo que ultrapassa o tamanho de um elemento é tratado.
+
+    padding - Define o espaço interno entre o conteúdo do elemento e a borda.
+
+    padding-top - Define o espaço interno no topo de um elemento, entre o conteúdo e a borda superior.
+
+    position - Define o método de posicionamento de um elemento na página.
+
+    row-gap - Define o espaço entre as linhas num layout de várias linhas ou num container flexível com elementos em linhas.
+
+    top - Define a posição vertical de um elemento em relação ao seu container quando o posicionamento é relative, absolute ou fixed.
+
+    width - Define a largura de um elemento.
+
+    z-index - Define a ordem de empilhamento de elementos, determinando quais elementos aparecem acima ou abaixo.
+
+Propriedades de Estilo:
+
+    background-color - Define a cor de fundo de um elemento.
+
+    border - Define uma borda ao redor de um elemento, incluindo a largura, estilo e cor.
+
+    border-radius - Define a curvatura das bordas de um elemento, permitindo criar bordas arredondadas.
+
+    box-sizing - Define o tamanho total do elemento. É calculado em relação ao conteúdo, bordas e padding.
+
+    color - Define a cor dentro de um elemento.
+
+    font-family - Define a fonte usada para o texto do elemento.
+
+    font-size - Define o tamanho da fonte do texto.
+
+    font-weight - Define a espessura da fonte, como normal ou negrito.
+
+    list-style - Define o estilo de marcadores ou números em listas, como círculos, quadrados ou números.
+
+    outline - Define uma linha ao redor de um elemento.
+
+    scroll-behavior - Controla o comportamento do scroll ao navegar por âncoras ou comandos de scroll.
+
+    text-decoration - Define o estilo de decoração do texto, como sublinhado, riscado ou sobrelinha.
+
+    transition - Define a duração e o tipo de animação.
+
+    box-shadow - Adiciona uma sombra ao redor de um elemento, permitindo definir deslocamento, desfoque, propagação e cor.
+
+    zoom - Controla o nível de ampliação ou redução de um elemento, alterando seu tamanho visual sem impactar o layout.
+
+Seletores e Pseudo-classes:
+
+    @import url - Importa uma fonte para formatar o texto (Familia Poppins da Google).
+
+    @media - Media Queries. Permite aplicação de estilos de acordo com o ecrã a ser utilizado ou outras características (Ex: Resolução do ecrã, orientação, aspect ratio, browser viewport, comprimento ou largura e preferências do utilizador, como reduced motion, data usage, ou transparência).
+
+    :root - Pseudo-classe. Representa o elemento <html>. Especificidade mais alta. Usado para declarar variáveis globais de CSS.
+
+    :hover - Pseudo-classe que aplica estilos a um elemento quando o cursor do rato passa sobre ele.
+    
+    * (asterisco) - Seletor universal. Aplica o estilo a todas as classes.
+
+    ::-webkit-scrollbar - Pseudo-elemento utilizado para estilizar barras de rolagem personalizadas em navegadores baseados no WebKit, como Chrome e Safari.
+
+    ::-webkit-scrollbar-thumb - Pseudo-elemento que estiliza a parte "arrastável" (polegar) da barra de rolagem em navegadores baseados no WebKit.
+
+Variáveis CSS:
+
+    --exemplo_var - Variável CSS. Contituído por "--nome_da_var: valor_da_var;". Usado como "elemento: var(--nome_da_var)".
+
+Unidades de Medida:
+
+    fr - Unidade de medida no CSS Grid que representa uma fração do espaço disponível no container, usada para distribuir colunas ou linhas proporcionalmente.
+    
+    px - Unidade de medida absoluta que representa pixels na tela, usada para definir tamanhos e espaçamentos.
+    
+    rem - Unidade de medida relativa ao tamanho da fonte raiz (<html>), permitindo escalabilidade consistente no design.
