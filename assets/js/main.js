@@ -1,3 +1,28 @@
+// Import Firebase functions
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+import {
+	getAuth,
+	signOut,
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	onAuthStateChanged,
+} from "https://www.gstatic.com/firebasejs/9.6.6/firebase-auth.js";
+
+// Firebase configuration (replace with your actual config)
+const firebaseConfig = {
+	apiKey: "AIzaSyACDeynjEEji0KA0pBRp9dxs3Va7emRS90",
+	authDomain: "webdev-1866d.firebaseapp.com",
+	projectId: "webdev-1866d",
+	storageBucket: "webdev-1866d.firebasestorage.app",
+	messagingSenderId: "196883956281",
+	appId: "1:196883956281:web:163411a11cc730c72d03e8",
+	measurementId: "G-CVSMZKXL46",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
 /*=============== CHANGE BACKGROUND HEADER ===============*/
 function scrollHeader() {
 	const header = document.getElementById("header");
@@ -124,7 +149,7 @@ const sr = ScrollReveal({
 });
 
 sr.reveal(
-	".home__title, .popular__container, subscribe__container, .footer__container"
+	".home__title, .popular__container, subscribe__container, .footer__container, .recommendations__container, .cookie-popup"
 );
 sr.reveal(".home__description", { delay: 500 });
 sr.reveal(".home__search, .footer__info", { delay: 600 });
@@ -133,3 +158,38 @@ sr.reveal(".home__images", { delay: 800, origin: "bottom" });
 sr.reveal(".logos__img", { interval: 100 });
 sr.reveal(".value__images, .contact__content", { origin: "left" });
 sr.reveal(".value__content, .contact__images", { origin: "right" });
+
+/*=============== CHECK USER STATUS ===============*/
+onAuthStateChanged(auth, (user) => {
+	if (user) {
+		console.log("User is logged in:", user.email);
+	} else {
+		console.log("No user logged in");
+	}
+});
+
+/*=============== COOKIES POPUP ===============*/
+// Cookie Popup Logic
+const cookiePopup = document.getElementById("cookiePopup");
+const acceptCookies = document.getElementById("acceptCookies");
+const declineCookies = document.getElementById("declineCookies");
+
+// Check if cookies are already accepted or declined
+if (
+	!localStorage.getItem("cookiesAccepted") &&
+	!sessionStorage.getItem("cookiesDeclined")
+) {
+	cookiePopup.style.display = "flex"; // Show popup
+}
+
+// Handle Accept button click
+acceptCookies.addEventListener("click", () => {
+	localStorage.setItem("cookiesAccepted", "true"); // Save in local storage
+	cookiePopup.style.display = "none"; // Hide popup
+});
+
+// Handle Decline button click
+declineCookies.addEventListener("click", () => {
+	sessionStorage.setItem("cookiesDeclined", "true"); // Save in session storage
+	cookiePopup.style.display = "none"; // Hide popup
+});

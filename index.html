@@ -8,8 +8,15 @@
     <!--=============== FAVICON ===============-->
     <link rel="shortcut icon" href="" type="image/x-icon">
 
+    <!--=============== FIREBASE ===============-->
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+
     <!--=============== BOXICONS ===============-->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <!--=============== SWEETALERT2 ===============-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!--=============== SWIPER CSS ===============-->
     <link rel="stylesheet" href="assets/css/swiper-bundle.min.css">
@@ -58,13 +65,18 @@
                         </a>
                     </li>
 
+                    <li class="nav__item">
+                        <a href="#" class="nav__link" id="loginButton">
+                            <i class='bx bx-phone'></i>
+                            <span>Login</span>
+                        </a>
+                    </li>
+
                 </ul>
             </div>
 
-            <!-- Change theme button -->
+            <!-- Theme button -->
             <i class="bx bx-moon change-theme" id="theme-button"></i>
-
-            <a href="" class="button nav__button">Login</a>
 
         </nav>
     </header>
@@ -145,8 +157,8 @@
         <!--==================== POPULAR ====================-->
         <section class="popular section" id="popular">
             <div class="container">
-                <span class="section__subtitle">> Melhores Escolhas</span>
-                <h2 class="section__title">Residências Populares</h2>
+                <span class="section__subtitle">Melhores Escolhas</span>
+                <h2 class="section__title">Residências Populares<span>.</span></h2>
                 <div class="popular__container swiper">
                     <div class="swiper-wrapper">
                         <article class="popular__card swiper-slide">
@@ -228,8 +240,8 @@
 
                 <div class="value__content">
                     <div class="value__data">
-                        <span class="section__subtitle">> O Nosso Valor</span>
-                        <h2 class="scetion__title">
+                        <span class="section__subtitle">O Nosso Valor</span>
+                        <h2 class="section__title">
                             Valor que lhe Oferecemos<span>.</span>
                         </h2>
                         <p class="value__description">
@@ -364,6 +376,55 @@
             </div>
         </section>
 
+        <!--==================== RECOMMENDATIONS ====================-->
+        <section class="recommendations section">
+            <div class="recommendations__container container">
+                <span class="section__subtitle">O que dizem sobre nós</span>
+                <h2 class="section__title">Recomendações<span>.</span></h2>
+                <div class="recommendations__content grid">
+                    <div class="recommendations__card">
+                        <p class="recommendations__text">
+                            "A melhor experiência! Eles fizeram um trabalho impecável na nossa casa. Altamente
+                            recomendados!"
+                        </p>
+                        <div class="recommendations__user">
+                            <img src="assets/img/joao.jpg" alt="User 1" class="recommendations__img">
+                            <div>
+                                <h3 class="recommendations__name">João Silva</h3>
+                                <p class="recommendations__job">Cliente</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recommendations__card">
+                        <p class="recommendations__text">
+                            "Muito profissionais e dedicados. Estou extremamente satisfeito com o resultado final."
+                        </p>
+                        <div class="recommendations__user">
+                            <img src="assets/img/maria.jpg" alt="User 2" class="recommendations__img">
+                            <div>
+                                <h3 class="recommendations__name">Maria Costa</h3>
+                                <p class="recommendations__job">Cliente</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recommendations__card">
+                        <p class="recommendations__text">
+                            "Excelente atendimento, atenção aos detalhes e profissionalismo. Não poderia estar mais
+                            feliz!"
+                        </p>
+                        <div class="recommendations__user">
+                            <img src="assets/img/carlos.jpg" alt="User 3" class="recommendations__img">
+                            <div>
+                                <h3 class="recommendations__name">Carlos Mendes</h3>
+                                <p class="recommendations__job">Cliente</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
         <!--==================== SUBSCRIBE ====================-->
         <section class="subscribe section">
             <div class="subscribe__container container">
@@ -457,12 +518,22 @@
         </div>
     </footer>
 
-
     <!--========== SCROLL UP ==========-->
     <a href="#" class="scrollup" id="scroll-up">
         <i class="bx bx-chevrons-up"></i>
     </a>
 
+    <!--========== COOKIES POPUP ==========-->
+    <div class="cookie-popup" id="cookiePopup">
+        <p>
+            Usamos cookies para melhorar as experiências no nosso site.
+            <a href="#!" class="cookie-popup__link">Saber mais</a>
+        </p>
+        <div class="cookie-popup__buttons">
+            <button class="cookie-popup__btn" id="acceptCookies">Aceitar</button>
+            <button class="cookie-popup__btn cookie-popup__btn--decline" id="declineCookies">Recusar</button>
+        </div>
+    </div>
 
     <!--=============== SCROLLREVEAL ===============-->
     <script src="assets/js/scrollreveal.min.js"></script>
@@ -471,7 +542,7 @@
     <script src="assets/js/swiper-bundle.min.js"></script>
 
     <!--=============== MAIN JS ===============-->
-    <script src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/main.js"></script>
 </body>
 
 </html>
