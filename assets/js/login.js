@@ -6,6 +6,7 @@ import {
 	signOut,
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
+	updateProfile,
 	onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-auth.js";
 
@@ -78,42 +79,53 @@ buttonAccess.addEventListener("click", () => {
 const loginForm = document.querySelector(".login__access .login__form");
 const registerForm = document.querySelector(".login__register .login__form");
 
-// Função para exibir mensagens com SweetAlert
-const showAlert = (type, title, text) => {
-	Swal.fire({
-		icon: type, // success, error, warning, info
-		title: title,
-		text: text,
-		confirmButtonText: "OK",
-	});
-};
-
 // Manipulador de login
 loginForm.addEventListener("submit", (e) => {
 	e.preventDefault();
 	const email = document.getElementById("email").value;
 	const password = document.getElementById("password").value;
 
-	signInWithEmailAndPassword(auth, email, password).catch((error) => {
-		let errorMessage;
-		switch (error.code) {
-			case "auth/invalid-credential":
-				errorMessage = "Dados de login incorretos, Tente novamente.";
-				break;
-			case "auth/wrong-password":
-				errorMessage = "Senha incorreta. Tente novamente.";
-				break;
-			case "auth/too-many-requests":
-				errorMessage = "Muitas tentativas. Tente novamente mais tarde.";
-				break;
-			default:
-				errorMessage = "Ocorreu um erro. Por favor tente novamente mais tarde.";
-		}
-		showAlert("error", "Erro ao Fazer Login", errorMessage);
-	});
+	signInWithEmailAndPassword(auth, email, password)
+		.then((userCredential) => {
+			const user = userCredential.user;
+			Swal.fire({
+				icon: "success",
+				title: "Login Bem-Sucedido",
+				text: `Bem-vindo(a), ${user.email}!`,
+				confirmButtonText: "OK",
+				willClose: () => {
+					window.location.href = "index.html";
+				},
+			});
+		})
+		.catch((error) => {
+			let errorMessage;
+			switch (error.code) {
+				case "auth/invalid-credential":
+					errorMessage = "Dados de login incorretos, Tente novamente.";
+					break;
+				case "auth/wrong-password":
+					errorMessage = "Senha incorreta. Tente novamente.";
+					break;
+				case "auth/too-many-requests":
+					errorMessage = "Muitas tentativas. Tente novamente mais tarde.";
+					break;
+				default:
+					errorMessage =
+						"Ocorreu um erro. Por favor tente novamente mais tarde.";
+			}
+			Swal.fire({
+				icon: "error",
+				title: "Erro ao Fazer Login",
+				text: errorMessage,
+				confirmButtonText: "OK",
+			});
+		});
 });
 
-// Manipulador de registro
+// Manipulador de registo
+let isRegistering = false; // Flag para controlar o registro
+
 registerForm.addEventListener("submit", (e) => {
 	e.preventDefault();
 	const email = document.getElementById("emailCreate").value;
@@ -121,14 +133,37 @@ registerForm.addEventListener("submit", (e) => {
 	const firstName = document.getElementById("names").value;
 	const lastName = document.getElementById("surnames").value;
 
+	// Set the flag to true when starting the registration process
+	isRegistering = true;
+
 	createUserWithEmailAndPassword(auth, email, password)
 		.then((userCredential) => {
 			const user = userCredential.user;
-			showAlert(
-				"success",
-				"Registro Bem-Sucedido",
-				`Conta criada com sucesso! Bem-vindo(a), ${firstName} ${lastName}!`
-			);
+
+			// Atualizar o nome no perfil do usuário
+			updateProfile(user, {
+				displayName: `${firstName} ${lastName}`,
+			})
+				.then(() => {
+					// Exibir o alerta de sucesso após a atualização do perfil
+					Swal.fire({
+						icon: "success",
+						title: "Registro Bem-Sucedido",
+						text: `Conta criada com sucesso! Bem-vindo(a), ${firstName} ${lastName}!`,
+						confirmButtonText: "OK",
+					}).then(() => {
+						// Refresh the page after successful registration
+						window.location.reload();
+					});
+				})
+				.catch((error) => {
+					Swal.fire({
+						icon: "error",
+						title: "Erro ao Atualizar Perfil",
+						text: "Ocorreu um erro ao tentar atualizar o nome do usuário.",
+						confirmButtonText: "OK",
+					});
+				});
 		})
 		.catch((error) => {
 			let errorMessage;
@@ -145,58 +180,21 @@ registerForm.addEventListener("submit", (e) => {
 				default:
 					errorMessage = "Ocorreu um erro desconhecido.";
 			}
-			showAlert("error", "Erro ao Criar Conta", errorMessage);
+			Swal.fire({
+				icon: "error",
+				title: "Erro ao Criar Conta",
+				text: errorMessage,
+				confirmButtonText: "OK",
+			});
 		});
 });
 
 /*=============== CHECK USER LOG ===============*/
-let isPageLoadCheck = true;
-
+// Monitoramento de estado de autenticação
 onAuthStateChanged(auth, (user) => {
 	if (user) {
-		if (isPageLoadCheck) {
-			Swal.fire({
-				title: "Sessão já iniciada.",
-				text: `Está conectado como ${user.email}. Deseja sair?`,
-				icon: "info",
-				showCancelButton: true,
-				confirmButtonText: "Sim, sair.",
-				cancelButtonText: "Não, permanecer.",
-				allowOutsideClick: false,
-			}).then((result) => {
-				if (result.isConfirmed) {
-					signOut(auth)
-						.then(() => {
-							Swal.fire({
-								icon: "success",
-								title: "Logout realizado",
-								text: "Saiu com sucesso.",
-								confirmButtonText: "OK",
-							});
-						})
-						.catch((error) => {
-							Swal.fire({
-								icon: "error",
-								title: "Erro ao sair",
-								text: `Ocorreu um erro ao tentar sair.`,
-								confirmButtonText: "OK",
-							});
-							console.log(error.message);
-						});
-				} else {
-					Swal.fire({
-						icon: "info",
-						title: "Sessão iniciada",
-						text: "Você permanecerá com sessão iniciada.",
-						confirmButtonText: "OK",
-						willClose: () => {
-							window.location.href = "index.html";
-						},
-					});
-				}
-			});
-		} else {
-			// Login bem-sucedido
+		if (!isRegistering) {
+			// Apenas exibir o popup de login se não for um processo de registro
 			Swal.fire({
 				icon: "success",
 				title: "Login Bem-Sucedido",
@@ -206,9 +204,11 @@ onAuthStateChanged(auth, (user) => {
 					window.location.href = "index.html";
 				},
 			});
+		} else {
+			// Reset the flag after successful registration
+			isRegistering = false;
 		}
 	} else {
-		console.log("Nenhum utlilzador com sessão iniciada.");
+		console.log("Nenhum utilizador com sessão iniciada.");
 	}
-	isPageLoadCheck = false;
 });

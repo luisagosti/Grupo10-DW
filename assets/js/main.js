@@ -160,9 +160,35 @@ sr.reveal(".value__content, .contact__images", { origin: "right" });
 /*=============== CHECK USER STATUS ===============*/
 onAuthStateChanged(auth, (user) => {
 	if (user) {
-		console.log("User is logged in:", user.email);
+		// Log da info toda do user
+		console.log(
+			`User is logged in: \nEmail: ${user.email}, \nDisplay Name: ${
+				user.displayName || "N/A"
+			}, \nUser ID (UID): ${user.uid}, \nPhoto URL: ${
+				user.photoURL || "N/A"
+			}, \nEmail Verified: ${user.emailVerified ? "Yes" : "No"}`
+		);
+
+		// Extrair o primeiro nome do displayName
+		const firstName = user.displayName
+			? user.displayName.split(" ")[0]
+			: "Usuário";
+
+		// Alterar o texto do botão "Login" para o primeiro nome
+		const loginButton = document.getElementById("loginButton");
+		if (loginButton) {
+			const loginSpan = loginButton.querySelector("span");
+			loginSpan.textContent = firstName;
+		}
 	} else {
 		console.log("No user logged in");
+
+		// Se o usuário não estiver logado, mostrar "Login"
+		const loginButton = document.getElementById("loginButton");
+		if (loginButton) {
+			const loginSpan = loginButton.querySelector("span");
+			loginSpan.textContent = "Login";
+		}
 	}
 });
 
