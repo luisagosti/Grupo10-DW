@@ -3,12 +3,18 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
 import {
 	getAuth,
-	signOut,
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 	updateProfile,
 	onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-auth.js";
+import {
+	getFirestore,
+	doc,
+	setDoc,
+	updateDoc,
+	serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
 
 // Firebase configuration (replace with your actual config)
 const firebaseConfig = {
@@ -24,6 +30,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+// Initialize Firestore
+const db = getFirestore(app);
 
 /*=============== SHOW HIDE PASSWORD LOGIN ===============*/
 const passwordAccess = (loginPass, loginEye) => {
@@ -88,15 +97,31 @@ loginForm.addEventListener("submit", (e) => {
 	signInWithEmailAndPassword(auth, email, password)
 		.then((userCredential) => {
 			const user = userCredential.user;
-			Swal.fire({
-				icon: "success",
-				title: "Login Bem-Sucedido",
-				text: `Bem-vindo(a), ${user.email}!`,
-				confirmButtonText: "OK",
-				willClose: () => {
-					window.location.href = "index.html";
-				},
-			});
+
+			// Update the last login timestamp in Firestore
+			const userRef = doc(db, "users", user.uid); // Reference to the user's Firestore document
+			updateDoc(userRef, {
+				lastLogin: serverTimestamp(), // Set the lastLogin field to the current server timestamp
+			})
+				.then(() => {
+					Swal.fire({
+						icon: "success",
+						title: "Login Bem-Sucedido",
+						text: `Bem-vindo(a), ${user.email}!`,
+						confirmButtonText: "OK",
+						willClose: () => {
+							window.location.href = "index.html";
+						},
+					});
+				})
+				.catch((error) => {
+					Swal.fire({
+						icon: "error",
+						title: "Erro ao Atualizar Login",
+						text: "Ocorreu um erro ao tentar atualizar o último login.",
+						confirmButtonText: "OK",
+					});
+				});
 		})
 		.catch((error) => {
 			let errorMessage;
@@ -145,16 +170,34 @@ registerForm.addEventListener("submit", (e) => {
 				displayName: `${firstName} ${lastName}`,
 			})
 				.then(() => {
-					// Exibir o alerta de sucesso após a atualização do perfil
-					Swal.fire({
-						icon: "success",
-						title: "Registro Bem-Sucedido",
-						text: `Conta criada com sucesso! Bem-vindo(a), ${firstName} ${lastName}!`,
-						confirmButtonText: "OK",
-					}).then(() => {
-						// Refresh the page after successful registration
-						window.location.reload();
-					});
+					// Save user data to Firestore
+					const userRef = doc(db, "users", user.uid); // Create a reference for the user
+					setDoc(userRef, {
+						firstName: firstName,
+						lastName: lastName,
+						email: user.email,
+						createdAt: new Date(),
+					})
+						.then(() => {
+							// Exibir o alerta de sucesso após salvar os dados
+							Swal.fire({
+								icon: "success",
+								title: "Registro Bem-Sucedido",
+								text: `Conta criada com sucesso! Bem-vindo(a), ${firstName} ${lastName}!`,
+								confirmButtonText: "OK",
+							}).then(() => {
+								// Refresh the page after successful registration
+								window.location.reload();
+							});
+						})
+						.catch((error) => {
+							Swal.fire({
+								icon: "error",
+								title: "Erro ao Salvar Dados",
+								text: "Ocorreu um erro ao tentar salvar seus dados.",
+								confirmButtonText: "OK",
+							});
+						});
 				})
 				.catch((error) => {
 					Swal.fire({

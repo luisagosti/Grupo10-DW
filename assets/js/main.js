@@ -5,6 +5,11 @@ import {
 	getAuth,
 	onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-auth.js";
+import {
+	getFirestore,
+	collection,
+	getDocs,
+} from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
 
 // Firebase configuration (replace with your actual config)
 const firebaseConfig = {
@@ -36,15 +41,21 @@ window.addEventListener("scroll", scrollHeader);
 /*=============== HOUSES JSON AND SWIPPER ===============*/
 document.addEventListener("DOMContentLoaded", () => {
 	const container = document.getElementById("houses-container");
+	const db = getFirestore(); // Firestore reference
 
-	// Carregar o ficheiro JSON
-	fetch("houses.json")
-		.then((response) => response.json())
-		.then((data) => {
-			data.forEach((house) => {
+	// Reference to the 'houses' collection
+	const housesRef = collection(db, "houses");
+
+	// Fetch houses from Firestore
+	getDocs(housesRef)
+		.then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				const house = doc.data(); // Get data from Firestore document
+
+				// Create house card dynamically
 				const houseCard = `
                     <article class="popular__card swiper-slide" data-id="${
-											house.id
+											doc.id
 										}">
                         <img src="${house.image}" alt="${
 					house.title
@@ -79,7 +90,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				},
 			});
 		})
-		.catch((error) => console.error("Erro ao carregar as casas:", error));
+		.catch((error) =>
+			console.error("Error loading houses from Firestore:", error)
+		);
 });
 
 /*=============== VALUE ACCORDION ===============*/
