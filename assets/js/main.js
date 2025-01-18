@@ -33,17 +33,53 @@ function scrollHeader() {
 
 window.addEventListener("scroll", scrollHeader);
 
-/*=============== SWIPER POPULAR ===============*/
-var swiperPopular = new Swiper(".popular__container", {
-	spaceBetween: 32,
-	grabCursor: true,
-	centeredSlides: true,
-	slidesPerView: "auto",
-	loop: true,
-	navigation: {
-		nextEl: ".swiper-button-next",
-		prevEl: ".swiper-button-prev",
-	},
+/*=============== HOUSES JSON AND SWIPPER ===============*/
+document.addEventListener("DOMContentLoaded", () => {
+	const container = document.getElementById("houses-container");
+
+	// Carregar o ficheiro JSON
+	fetch("houses.json")
+		.then((response) => response.json())
+		.then((data) => {
+			data.forEach((house) => {
+				const houseCard = `
+                    <article class="popular__card swiper-slide" data-id="${
+											house.id
+										}">
+                        <img src="${house.image}" alt="${
+					house.title
+				}" class="popular__img">
+                        <div class="popular__data">
+                            <h2 class="popular__price">
+                                ${house.price.replace(
+																	"€",
+																	'<span class="euro-symbol">€</span>'
+																)}
+                            </h2>
+                            <h3 class="popular__title">${house.title}</h3>
+                            <p class="popular__description">${
+															house.location
+														}</p>
+                        </div>
+                    </article>
+                `;
+				container.innerHTML += houseCard;
+			});
+
+			// Initialize Swiper
+			const swiperPopular = new Swiper(".popular__container", {
+				spaceBetween: 32,
+				grabCursor: true,
+				centeredSlides: true,
+				slidesPerView: "auto",
+				loop: true,
+				navigation: {
+					nextEl: ".swiper-button-next",
+					prevEl: ".swiper-button-prev",
+				},
+			});
+		})
+		.catch((error) => console.error("Erro ao carregar as casas:", error));
 });
 
 /*=============== VALUE ACCORDION ===============*/
@@ -116,25 +152,34 @@ const themeButton = document.getElementById("theme-button");
 const darkTheme = "dark-theme";
 const iconTheme = "bx-sun";
 
+// Get the selected theme and icon from local storage
 const selectedTheme = localStorage.getItem("selected-theme");
 const selectedIcon = localStorage.getItem("selected-icon");
 
+// Get the current theme and icon based on the class on the document
 const getCurrentTheme = () =>
 	document.body.classList.contains(darkTheme) ? "dark" : "light";
 const getCurrentIcon = () =>
-	themeButton.classList.contains(iconTheme) ? "bx bx-moon" : "bx bx-sun";
+	themeButton.classList.contains(iconTheme) ? "bx-moon" : "bx-sun";
 
+// If there's a selected theme and icon in local storage, apply them
 if (selectedTheme) {
-	document.body.classList[selectedTheme === "dark" ? "add" : "remove"];
-	themeButton.classList[selectedIcon === "bx bx-moon" ? "add" : "remove"];
+	document.body.classList[selectedTheme === "dark" ? "add" : "remove"](
+		darkTheme
+	);
+	themeButton.classList[selectedIcon === "bx-moon" ? "add" : "remove"](
+		iconTheme
+	);
 }
 
+// Add event listener to toggle between dark and light mode
 themeButton.addEventListener("click", () => {
 	document.body.classList.toggle(darkTheme);
 	themeButton.classList.toggle(iconTheme);
 
-	localStorage.setItem("selected-theme", getCurrentTheme);
-	localStorage.setItem("selected-icon", getCurrentIcon);
+	// Save the current theme and icon in local storage
+	localStorage.setItem("selected-theme", getCurrentTheme());
+	localStorage.setItem("selected-icon", getCurrentIcon());
 });
 
 /*=============== SCROLL REVEAL ANIMATION ===============*/

@@ -1,0 +1,34 @@
+[
+	{
+		"id": 1,
+		"image": "assets/img/popular1.jpg",
+		"price": "213.500€",
+		"title": "Moradia Requintada Alentejana",
+		"location": "R. José Maria de Carvalho, Reguengos de Monsaraz",
+		"description": "Esta moradia combina o charme tradicional do Alentejo com um design moderno e sofisticado. Perfeita para quem busca conforto e elegância."
+	},
+	{
+		"id": 2,
+		"image": "assets/img/popular2.jpg",
+		"price": "243.800€",
+		"title": "Casa Luxuosa Alentejana",
+		"location": "R. Maria de Sá, Reguengos de Monsaraz",
+		"description": "Uma casa luxuosa, com acabamentos de alta qualidade e localização privilegiada. Ideal para quem deseja exclusividade e requinte."
+	},
+	{
+		"id": 3,
+		"image": "assets/img/popular3.jpg",
+		"price": "198.800€",
+		"title": "Casinha Simpática Alentejana",
+		"location": "R. Pedro e Inês, Reguengos de Monsaraz",
+		"description": "Uma casinha aconchegante e acolhedora, com um toque rústico e encantador, perfeita para quem aprecia a tranquilidade do Alentejo."
+	},
+	{
+		"id": 4,
+		"image": "assets/img/popular4.jpg",
+		"price": "398.800€",
+		"title": "Casarão Chique Alentejano",
+		"location": "R. João Damaia, Reguengos de Monsaraz",
+		"description": "Este casarão chique reflete o luxo e a história do Alentejo, oferecendo uma experiência única de elegância e conforto."
+	}
+]

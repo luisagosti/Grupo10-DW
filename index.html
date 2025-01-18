@@ -93,7 +93,10 @@
                     <form action="" class="home__search">
                         <i class='bx bxs-map'></i>
                         <input type="search" placeholder="Localização..." class="home__search-input">
-                        <button class="button">Procurar</button>
+                        <button type="button" class="button"
+                            onclick="setTimeout(() => document.getElementById('popular').scrollIntoView({ behavior: 'smooth' }), 500)">
+                            Procurar
+                        </button>
                     </form>
 
                     <div class="home__value">
@@ -156,63 +159,8 @@
                 <span class="section__subtitle">Melhores Escolhas</span>
                 <h2 class="section__title">Residências Populares<span>.</span></h2>
                 <div class="popular__container swiper">
-                    <div class="swiper-wrapper">
-                        <article class="popular__card swiper-slide">
-                            <img src="assets/img/popular1.jpg" alt="" class="popular__img">
-                            <div class="popular__data">
-                                <h2 class="popular__price">
-                                    213.500<span>€</span>
-                                </h2>
-                                <h3 class="popular__title">
-                                    Moradia Requintada Alentejana
-                                </h3>
-                                <p class="popular__description">
-                                    R. José Maria de Carvalho, Reguengos de Monsaraz
-                                </p>
-                            </div>
-                        </article>
-                        <article class="popular__card swiper-slide">
-                            <img src="assets/img/popular2.jpg" alt="" class="popular__img">
-                            <div class="popular__data">
-                                <h2 class="popular__price">
-                                    243.800<span>€</span>
-                                </h2>
-                                <h3 class="popular__title">
-                                    Casa Luxuosa Alentejana
-                                </h3>
-                                <p class="popular__description">
-                                    R. Maria de Sá, Reguengos de Monsaraz
-                                </p>
-                            </div>
-                        </article>
-                        <article class="popular__card swiper-slide">
-                            <img src="assets/img/popular3.jpg" alt="" class="popular__img">
-                            <div class="popular__data">
-                                <h2 class="popular__price">
-                                    198.800<span>€</span>
-                                </h2>
-                                <h3 class="popular__title">
-                                    Casinha Simpática Alentejana
-                                </h3>
-                                <p class="popular__description">
-                                    R. Pedro e Inês, Reguengos de Monsaraz
-                                </p>
-                            </div>
-                        </article>
-                        <article class="popular__card swiper-slide">
-                            <img src="assets/img/popular4.jpg" alt="" class="popular__img">
-                            <div class="popular__data">
-                                <h2 class="popular__price">
-                                    398.800<span>€</span>
-                                </h2>
-                                <h3 class="popular__title">
-                                    Casarão Chique Alentejano
-                                </h3>
-                                <p class="popular__description">
-                                    R. João Damaia, Reguengos de Monsaraz
-                                </p>
-                            </div>
-                        </article>
+                    <div class="swiper-wrapper" id="houses-container">
+                        <!-- As casas serão carregadas dinamicamente aqui -->
                     </div>
                     <div class="swiper-button-next">
                         <i class='bx bx-chevron-right'></i>
