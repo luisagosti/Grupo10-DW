@@ -672,3 +672,34 @@ body {
 		padding: 0.7rem;
 	}
 }
+
+/* Profile */
+#profile {
+	display: flex;
+	align-items: center;
+	font-size: 1rem;
+	color: #333;
+}
+
+#profile span {
+	display: none; /* Initially hidden for smaller screens */
+}
+
+@media screen and (min-width: 576px) {
+	#profile span {
+		display: inline-block; /* Show on medium and larger screens */
+		font-size: 0.9rem; /* Adjust size for medium screens */
+		color: #555; /* Subtle color for readability */
+	}
+
+	#profile {
+		font-size: 1rem;
+		color: #000;
+	}
+}
+
+@media screen and (min-width: 768px) {
+	#profile span {
+		font-size: 1rem; /* Larger font size for larger screens */
+	}
+}

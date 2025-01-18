@@ -216,6 +216,8 @@ sr.reveal(".value__images, .contact__content", { origin: "left" });
 sr.reveal(".value__content, .contact__images", { origin: "right" });
 
 /*=============== CHECK USER STATUS ===============*/
+const loginButton = document.getElementById("loginButton");
+
 onAuthStateChanged(auth, (user) => {
 	if (user) {
 		// Log da info toda do user
@@ -230,23 +232,32 @@ onAuthStateChanged(auth, (user) => {
 		// Extrair o primeiro nome do displayName
 		const firstName = user.displayName
 			? user.displayName.split(" ")[0]
-			: "Usuário";
+			: "User";
 
 		// Alterar o texto do botão "Login" para o primeiro nome
-		const loginButton = document.getElementById("loginButton");
 		if (loginButton) {
 			const loginSpan = loginButton.querySelector("span");
 			loginSpan.textContent = firstName;
 		}
+
+		// Add click event to login button
+		loginButton.addEventListener("click", () => {
+			// Redirect to user.html if logged in
+			window.location.href = "user.html";
+		});
 	} else {
 		console.log("No user logged in");
 
-		// Se o usuário não estiver logado, mostrar "Login"
-		const loginButton = document.getElementById("loginButton");
 		if (loginButton) {
 			const loginSpan = loginButton.querySelector("span");
 			loginSpan.textContent = "Login";
 		}
+
+		// Add click event to login button
+		loginButton.addEventListener("click", () => {
+			// Redirect to user.html if logged in
+			window.location.href = "login.html";
+		});
 	}
 });
 

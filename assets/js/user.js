@@ -34,6 +34,49 @@ const db = getFirestore(app);
 // Reference to the houses collection
 const housesCollection = collection(db, "houses");
 
+/* =============== WELCOME USER =============== */
+async function welcomeUser(user) {
+	const profileElement = document.getElementById("profile");
+	if (!profileElement) {
+		console.error("Elemento 'profile' não encontrado.");
+		return;
+	}
+
+	if (user) {
+		// Fetch the user document from Firestore
+		const userRef = collection(db, "users");
+		const querySnapshot = await getDocs(userRef);
+		let userDoc = null;
+
+		// Find the document for the logged-in user by email
+		querySnapshot.forEach((doc) => {
+			if (doc.data().email === user.email) {
+				userDoc = doc.data();
+			}
+		});
+
+		// If the document exists, update the profile with the first name
+		if (userDoc && userDoc.firstName) {
+			profileElement.innerHTML = `
+				<i class='bx bx-user'></i>
+				<span>Bem-vindo, ${userDoc.firstName}!</span>
+			`;
+		} else {
+			// Fallback message if userDoc or firstName is missing
+			profileElement.innerHTML = `
+				<i class='bx bx-user'></i>
+				<span>Bem-vindo!</span>
+			`;
+		}
+	} else {
+		// Default message if no user is logged in
+		profileElement.innerHTML = `
+			<i class='bx bx-user'></i>
+			<span>Bem-vindo!</span>
+		`;
+	}
+}
+
 /* =============== DISPLAY USER INFO =============== */
 // Function to display user info
 async function displayUserInfo(user) {
@@ -103,14 +146,21 @@ async function logAllUsers() {
 logAllUsers();
 
 /* =============== FETCH ALL USERS AND DISPLAY =============== */
-
 // Function to fetch and display all users in the table
 async function displayUsersInTable() {
 	const usersRef = collection(db, "users"); // Reference to the 'users' collection
 	const querySnapshot = await getDocs(usersRef); // Get all documents
 
-	// Loop through the documents and update the table rows
+	const tableBody = document.getElementById("userTableBody"); // Replace with the correct table body ID
+	const addedUserIds = new Set(); // Track added user IDs
+
+	// Clear existing rows in the table body
+	tableBody.innerHTML = "";
+
 	querySnapshot.forEach((doc) => {
+		const userId = doc.id; // Unique user document ID
+		if (addedUserIds.has(userId)) return; // Skip if user already added
+
 		const userData = doc.data();
 		const firstName = userData.firstName || "Nome não disponível"; // Use Firestore firstName or fallback
 		const lastName = userData.lastName || ""; // Use Firestore lastName or fallback
@@ -128,12 +178,14 @@ async function displayUsersInTable() {
 				</div>
 			</td>
 			<td>${lastLogin}</td>
-			<td><span class="status completed">Completed</span></td>
+			<td><span class="status completed">Online</span></td>
 		`;
 
 		// Append the new row to the table body
-		const tableBody = document.getElementById("userTableBody"); // Replace with the correct table body ID
 		tableBody.appendChild(row);
+
+		// Mark this user as added
+		addedUserIds.add(userId);
 	});
 }
 
@@ -141,15 +193,35 @@ async function displayUsersInTable() {
 displayUsersInTable();
 
 /* =============== AUTHENTICATION CHECK =============== */
-onAuthStateChanged(auth, (user) => {
-	const userInfoContainer = document.getElementById("user-info");
+/* =============== DISPLAY WELCOME MESSAGE =============== */
+onAuthStateChanged(auth, async (user) => {
 	if (user) {
-		console.log(`User logged in: ${user.email}`);
-		displayUserInfo(user); // Show logged in user info
+		// Fetch user details from Firestore
+		const userRef = collection(db, "users");
+		const querySnapshot = await getDocs(userRef);
+		let userDoc = null;
+
+		// Find the document for the logged-in user by email
+		querySnapshot.forEach((doc) => {
+			if (doc.data().email === user.email) {
+				userDoc = doc.data();
+			}
+		});
+
+		if (userDoc) {
+			const firstName = userDoc.firstName || "Usuário";
+
+			// Dynamically add the welcome message
+			const profile = document.getElementById("profile");
+			const welcomeMessage = document.createElement("span");
+			welcomeMessage.textContent = `Bem-vindo, ${firstName}`;
+			welcomeMessage.style.marginLeft = "8px"; // Add some spacing
+			welcomeMessage.style.fontSize = "1rem"; // Adjust size for responsiveness
+			welcomeMessage.style.whiteSpace = "nowrap"; // Prevent breaking
+			profile.appendChild(welcomeMessage);
+		}
 	} else {
 		console.log("User is not logged in");
-		userInfoContainer.innerHTML = "<p>Redirecionando para o login...</p>";
-		window.location.href = "/login.html"; // Redirect to login if not logged in
 	}
 });
 
@@ -171,7 +243,7 @@ logoutButton.addEventListener("click", (e) => {
 				text: "Você saiu da sua conta com sucesso!",
 				confirmButtonText: "OK",
 				willClose: () => {
-					window.location.href = "login.html"; // Redirect to login page or homepage
+					window.location.href = "index.html"; // Redirect to login page or homepage
 				},
 			});
 		})
@@ -251,8 +323,7 @@ switchMode.addEventListener("change", function () {
 	}
 });
 
-// Testes
-
+/* =============== HOUSES FIRESTORE =============== */
 // Fetch houses from Firestore
 async function loadHouses() {
 	try {
