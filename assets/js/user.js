@@ -11,9 +11,16 @@ import {
 	collection,
 	doc,
 	getDocs,
+	getDoc,
 	setDoc,
+	updateDoc,
 	query,
+	increment,
 } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
+import {
+	getAnalytics,
+	logEvent,
+} from "https://www.gstatic.com/firebasejs/9.6.6/firebase-analytics.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -30,9 +37,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const analytics = getAnalytics(app);
 
 // Reference to the houses collection
 const housesCollection = collection(db, "houses");
+
+// Log page view
+logEvent(analytics, "page_view");
 
 /* =============== WELCOME USER =============== */
 async function welcomeUser(user) {
@@ -43,6 +54,11 @@ async function welcomeUser(user) {
 	}
 
 	if (user) {
+		// Monitor user login state
+		logEvent(analytics, "user_login", {
+			user_email: user.email,
+		});
+
 		// Fetch the user document from Firestore
 		const userRef = collection(db, "users");
 		const querySnapshot = await getDocs(userRef);
@@ -131,6 +147,7 @@ async function displayUserInfo(user) {
 	}
 }
 
+/* =============== LOG USERS FIREBASE =============== */
 // Function to log all users saved in Firestore
 async function logAllUsers() {
 	const usersRef = collection(db, "users"); // Reference to the 'users' collection
@@ -193,7 +210,6 @@ async function displayUsersInTable() {
 displayUsersInTable();
 
 /* =============== AUTHENTICATION CHECK =============== */
-/* =============== DISPLAY WELCOME MESSAGE =============== */
 onAuthStateChanged(auth, async (user) => {
 	if (user) {
 		// Fetch user details from Firestore
@@ -220,6 +236,18 @@ onAuthStateChanged(auth, async (user) => {
 			welcomeMessage.style.whiteSpace = "nowrap"; // Prevent breaking
 			profile.appendChild(welcomeMessage);
 		}
+
+		// User is signed in
+		const userName = user.displayName || "Nome não disponível";
+		const userEmail = user.email;
+		const userLastLogin = user.metadata.lastSignInTime;
+
+		// Populate the HTML elements with the user data
+		document.getElementById("userName").textContent = userName;
+		document.getElementById("userEmail").textContent = userEmail;
+		document.getElementById("userLastLogin").textContent = new Date(
+			userLastLogin
+		).toLocaleString();
 	} else {
 		console.log("User is not logged in");
 	}
@@ -486,3 +514,171 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 });
+
+/* =============== CHANGE TABS =============== */
+document.addEventListener("DOMContentLoaded", () => {
+	// Ensure that the main content area is loaded
+	const contentArea = document.querySelector("#content");
+	if (!contentArea) {
+		console.error("Content area not found");
+		return;
+	}
+
+	// Create the sections for Dados and Casas inside the event listener to ensure they are added after the DOM is ready
+	const dadosSection = document.createElement("div"); // Create a blank page for Dados
+	dadosSection.style.display = "none"; // Initially hidden
+	dadosSection.innerHTML =
+		"<h1 style='text-align: center; margin-top: 50px;'></h1>"; // Blank page content
+
+	const casasSection = document.createElement("div"); // Create a blank page for Casas
+	casasSection.style.display = "none"; // Initially hidden
+	casasSection.innerHTML =
+		"<h1 style='text-align: center; margin-top: 50px;'></h1>"; // Blank page content
+
+	// Add the Dados and Casas sections to the content area
+	contentArea.appendChild(dadosSection);
+	contentArea.appendChild(casasSection);
+
+	// Get the dashboard section (if exists)
+	const dashboardSection = document.querySelector("main"); // The dashboard content
+	if (!dashboardSection) {
+		console.error("Dashboard section not found");
+		return;
+	}
+
+	// Get the links in the side menu
+	const dashboardLink = document.querySelector(".side-menu li:nth-child(1) a"); // Dashboard link
+	const dadosLink = document.querySelector(".side-menu li:nth-child(2) a"); // Dados link
+	const casasLink = document.querySelector(".side-menu li:nth-child(3) a"); // Casas link
+
+	if (!dashboardLink || !dadosLink || !casasLink) {
+		console.error("One or more side menu links not found");
+		return;
+	}
+
+	// Event listener for Dashboard
+	dashboardLink.addEventListener("click", (e) => {
+		e.preventDefault(); // Prevent default link behavior
+		dashboardSection.style.display = "block"; // Show dashboard content
+		dadosSection.style.display = "none"; // Hide Dados page
+		casasSection.style.display = "none"; // Hide Casas page
+		document.querySelector(".side-menu .active").classList.remove("active");
+		dashboardLink.parentElement.classList.add("active");
+	});
+
+	// Event listener for Dados
+	dadosLink.addEventListener("click", (e) => {
+		e.preventDefault(); // Prevent default link behavior
+		dashboardSection.style.display = "none"; // Hide dashboard content
+		dadosSection.style.display = "block"; // Show Dados page
+		casasSection.style.display = "none"; // Hide Casas page
+		document.querySelector(".side-menu .active").classList.remove("active");
+		dadosLink.parentElement.classList.add("active");
+	});
+
+	// Event listener for Casas
+	casasLink.addEventListener("click", (e) => {
+		e.preventDefault(); // Prevent default link behavior
+		dashboardSection.style.display = "none"; // Hide dashboard content
+		dadosSection.style.display = "none"; // Hide Dados page
+		casasSection.style.display = "block"; // Show Casas page
+		document.querySelector(".side-menu .active").classList.remove("active");
+		casasLink.parentElement.classList.add("active");
+	});
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+	const dashboardSection = document.querySelector("main"); // The dashboard content
+	const dadosSection = document.getElementById("dadosSection"); // Get the Dados section
+	dadosSection.style.display = "none"; // Initially hidden
+
+	const casasSection = document.createElement("div"); // Create a blank page for Casas
+	casasSection.style.display = "none"; // Initially hidden
+	casasSection.innerHTML =
+		"<h1 style='text-align: center; margin-top: 50px;'></h1>"; // Blank page content
+
+	// Add the Casas section to the content area
+	document.querySelector("#content").appendChild(casasSection);
+
+	const dashboardLink = document.querySelector(".side-menu li:nth-child(1) a"); // Dashboard link
+	const dadosLink = document.querySelector(".side-menu li:nth-child(2) a"); // Dados link
+	const casasLink = document.querySelector(".side-menu li:nth-child(3) a"); // Casas link
+
+	// Event listener for Dashboard
+	dashboardLink.addEventListener("click", (e) => {
+		e.preventDefault(); // Prevent default link behavior
+		dashboardSection.style.display = "block"; // Show dashboard content
+		dadosSection.style.display = "none"; // Hide Dados page
+		casasSection.style.display = "none"; // Hide Casas page
+		document.querySelector(".side-menu .active").classList.remove("active");
+		dashboardLink.parentElement.classList.add("active");
+	});
+
+	// Event listener for Dados
+	dadosLink.addEventListener("click", (e) => {
+		e.preventDefault(); // Prevent default link behavior
+		dashboardSection.style.display = "none"; // Hide dashboard content
+		dadosSection.style.display = "block"; // Show Dados page
+		casasSection.style.display = "none"; // Hide Casas page
+		document.querySelector(".side-menu .active").classList.remove("active");
+		dadosLink.parentElement.classList.add("active");
+	});
+
+	// Event listener for Casas
+	casasLink.addEventListener("click", (e) => {
+		e.preventDefault(); // Prevent default link behavior
+		dashboardSection.style.display = "none"; // Hide dashboard content
+		dadosSection.style.display = "none"; // Hide Dados page
+		casasSection.style.display = "block"; // Show Casas page
+		document.querySelector(".side-menu .active").classList.remove("active");
+		casasLink.parentElement.classList.add("active");
+	});
+});
+
+// Function to log the event
+function logLoginEvent(userEmail) {
+	logEvent(analytics, "user_login", {
+		user_email: userEmail,
+	});
+
+	// Increment login count in Firestore
+	incrementLoginCount();
+}
+
+// Function to increment login count in Firestore
+async function incrementLoginCount() {
+	const userRef = doc(db, "stats", "loginCount");
+
+	// Fetch the current login count
+	const docSnap = await getDoc(userRef);
+	if (docSnap.exists()) {
+		await updateDoc(userRef, {
+			count: increment(1),
+		});
+	} else {
+		await setDoc(userRef, { count: 1 });
+	}
+
+	// Update the visit count displayed on the page
+	displayVisitCount();
+}
+
+// Function to display the visit count
+async function displayVisitCount() {
+	const userRef = doc(db, "stats", "loginCount");
+
+	const docSnap = await getDoc(userRef);
+	if (docSnap.exists()) {
+		const visitCount = docSnap.data().count;
+		document.getElementById("visit-count").innerText = visitCount;
+	} else {
+		document.getElementById("visit-count").innerText = 0;
+	}
+}
+
+// Call this function to display the current visit count on page load
+displayVisitCount();
+
+// Example of triggering the login event (replace with actual login logic)
+const user = { email: "user@example.com" };
+logLoginEvent(user.email);
