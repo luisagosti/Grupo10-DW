@@ -210,47 +210,90 @@ async function displayUsersInTable() {
 displayUsersInTable();
 
 /* =============== AUTHENTICATION CHECK =============== */
-onAuthStateChanged(auth, async (user) => {
-	if (user) {
-		// Fetch user details from Firestore
-		const userRef = collection(db, "users");
-		const querySnapshot = await getDocs(userRef);
-		let userDoc = null;
+document.addEventListener("DOMContentLoaded", (event) => {
+	onAuthStateChanged(auth, async (user) => {
+		if (user) {
+			// Fetch user details from Firestore
+			const userRef = collection(db, "users");
+			const querySnapshot = await getDocs(userRef);
+			let userDoc = null;
 
-		// Find the document for the logged-in user by email
-		querySnapshot.forEach((doc) => {
-			if (doc.data().email === user.email) {
-				userDoc = doc.data();
+			// Find the document for the logged-in user by email
+			querySnapshot.forEach((doc) => {
+				if (doc.data().email === user.email) {
+					userDoc = doc.data();
+				}
+			});
+
+			if (userDoc) {
+				const firstName = userDoc.firstName || "Utilizador";
+
+				// Dynamically add the welcome message
+				const profile = document.getElementById("profile");
+				const welcomeMessage = document.createElement("span");
+				welcomeMessage.textContent = `Bem-vindo, ${firstName}`;
+				welcomeMessage.style.marginLeft = "8px"; // Add some spacing
+				welcomeMessage.style.fontSize = "1rem"; // Adjust size for responsiveness
+				welcomeMessage.style.whiteSpace = "nowrap"; // Prevent breaking
+				welcomeMessage.style.color = "color: var(--dark);";
+				profile.appendChild(welcomeMessage);
 			}
-		});
 
-		if (userDoc) {
-			const firstName = userDoc.firstName || "Utilizador";
+			// Debugging: Verifique o email do Utilizador logado
+			console.log("Email do utilizador logado:", user.email);
 
-			// Dynamically add the welcome message
-			const profile = document.getElementById("profile");
-			const welcomeMessage = document.createElement("span");
-			welcomeMessage.textContent = `Bem-vindo, ${firstName}`;
-			welcomeMessage.style.marginLeft = "8px"; // Add some spacing
-			welcomeMessage.style.fontSize = "1rem"; // Adjust size for responsiveness
-			welcomeMessage.style.whiteSpace = "nowrap"; // Prevent breaking
-			profile.appendChild(welcomeMessage);
+			// Verifica se o Utilizador logado é o admin
+			const dashboardLink = document.getElementById("dashboardLink");
+			const dadosLink = document.getElementById("dadosLink");
+
+			if (user.email === "admin@admin.com") {
+				// Exibe o dashboard se o Utilizador for admin
+				const dashboard = document.getElementById("dashboard");
+				if (dashboard) {
+					dashboard.style.display = "block"; // Exibe o dashboard
+				}
+
+				if (dashboardLink) {
+					dashboardLink.style.display = "block"; // Exibe o link do dashboard
+				}
+			} else {
+				// Caso contrário, oculta o dashboard e o link de dashboard
+				const dashboard = document.getElementById("dashboard");
+				if (dashboard) {
+					dashboard.style.display = "none"; // Oculta o dashboard
+				}
+
+				if (dashboardLink) {
+					dashboardLink.style.display = "none"; // Oculta o link do dashboard
+				}
+
+				dadosLink.classList.add("active"); // Marca "Dados" como ativo
+				document.getElementById("dadosLink").click();
+
+				document.getElementById("dadosSection").style.display = "block";
+			}
+
+			// Garantir que o link "Dados" seja o primeiro a ser exibido
+			if (dadosLink) {
+				dadosLink.classList.add("active"); // Marca "Dados" como ativo
+				document.getElementById("dadosLink").click();
+			}
+
+			// User is signed in
+			const userName = user.displayName || "Nome não disponível";
+			const userEmail = user.email;
+			const userLastLogin = user.metadata.lastSignInTime;
+
+			// Populate the HTML elements with the user data
+			document.getElementById("userName").textContent = userName;
+			document.getElementById("userEmail").textContent = userEmail;
+			document.getElementById("userLastLogin").textContent = new Date(
+				userLastLogin
+			).toLocaleString();
+		} else {
+			console.log("User is not logged in");
 		}
-
-		// User is signed in
-		const userName = user.displayName || "Nome não disponível";
-		const userEmail = user.email;
-		const userLastLogin = user.metadata.lastSignInTime;
-
-		// Populate the HTML elements with the user data
-		document.getElementById("userName").textContent = userName;
-		document.getElementById("userEmail").textContent = userEmail;
-		document.getElementById("userLastLogin").textContent = new Date(
-			userLastLogin
-		).toLocaleString();
-	} else {
-		console.log("User is not logged in");
-	}
+	});
 });
 
 /* =============== LOGOUT BUTTON =============== */

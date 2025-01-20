@@ -687,6 +687,7 @@ body {
 
 #profile span {
 	display: none; /* ============ Initially hidden for smaller screens ============ */
+	color: var(--dark);
 }
 
 @media screen and (min-width: 576px) {
@@ -717,7 +718,7 @@ body {
 }
 
 .user-info-box {
-	background-color: #fff;
+	background-color: var(--light);
 	border-radius: 0.8rem;
 	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 	width: 100%;
@@ -736,14 +737,14 @@ body {
 
 .user-info-item i {
 	font-size: 2rem;
-	color: #555;
+	color: var(--dark);
 }
 
 .text h3 {
 	margin: 0;
 	font-size: 1.5rem;
 	font-weight: 600;
-	color: #333;
+	color: var(--dark);
 }
 
 .text p {
