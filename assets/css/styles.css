@@ -1534,3 +1534,8 @@ body.dark-theme {
 		padding: 6px 12px; /* Adjust button padding */
 	}
 }
+
+.reserve-btn {
+	visibility: hidden; /* Make the button invisible but still functional */
+	display: none;
+}

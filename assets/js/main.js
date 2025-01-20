@@ -8,9 +8,12 @@ import {
 import {
 	getFirestore,
 	collection,
-	getDocs,
 	doc,
 	getDoc,
+	getDocs,
+	setDoc,
+	updateDoc,
+	arrayUnion,
 } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
 
 // Firebase configuration (replace with your actual config)
@@ -322,6 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <p class="popular__description">${
 															house.location
 														}</p>
+                            <button class="reserve-btn">Reservar</button>
                         </div>
                     </article>
                 `;
@@ -345,6 +349,59 @@ document.addEventListener("DOMContentLoaded", () => {
 			console.error("Error loading houses from Firestore:", error)
 		);
 
+	// Add event listener for reservations
+	document
+		.getElementById("houses-container")
+		.addEventListener("click", async (e) => {
+			// Check if the clicked element is a "Reservar" button
+			if (e.target.classList.contains("reserve-btn")) {
+				const houseCard = e.target.closest(".popular__card");
+				if (houseCard) {
+					const houseId = houseCard.dataset.id;
+					const user = auth.currentUser;
+
+					if (user) {
+						try {
+							const userRef = doc(db, "users", user.uid);
+
+							// Update Firestore with the reservation
+							await updateDoc(userRef, {
+								reservations: arrayUnion(houseId),
+							});
+
+							// Show SweetAlert on success
+							Swal.fire({
+								title: "Reservation Successful!",
+								text: "Your reservation was completed successfully.",
+								icon: "success",
+								confirmButtonText: "OK",
+							});
+
+							// Optionally update the button to indicate success
+							e.target.innerText = "Reserved";
+							e.target.disabled = true;
+							e.target.style.backgroundColor = "gray";
+						} catch (error) {
+							console.error("Error making reservation:", error);
+							Swal.fire({
+								title: "Reservation Failed",
+								text: "Please try again later.",
+								icon: "error",
+								confirmButtonText: "OK",
+							});
+						}
+					} else {
+						Swal.fire({
+							title: "Not Logged In",
+							text: "Please log in to reserve a house.",
+							icon: "warning",
+							confirmButtonText: "OK",
+						});
+					}
+				}
+			}
+		});
+
 	// Add event listener for opening popup
 	document.getElementById("houses-container").addEventListener("click", (e) => {
 		// Only trigger for house cards
@@ -363,8 +420,22 @@ document.addEventListener("DOMContentLoaded", () => {
 					document.getElementById("popup-description").innerText =
 						house.description;
 					document.getElementById("popup-price").innerText = house.price;
+
 					// Display the popup
 					document.getElementById("house-popup").style.display = "flex";
+
+					// Enable the popup-book-btn event listener
+					document
+						.getElementById("popup-book-btn")
+						.addEventListener("click", function () {
+							// Find the corresponding reserve button within the popup
+							const reserveBtn = document.querySelector(
+								'.popular__card[data-id="' + houseId + '"] .reserve-btn'
+							);
+							if (reserveBtn) {
+								reserveBtn.click();
+							}
+						});
 				})
 				.catch((error) =>
 					console.error("Error fetching house details:", error)
@@ -383,4 +454,52 @@ document.addEventListener("DOMContentLoaded", () => {
 			document.getElementById("house-popup").style.display = "none";
 		}
 	});
+});
+
+// Function to handle "Reservar" clicks
+const handleReservation = async (houseId) => {
+	const user = auth.currentUser;
+
+	if (!user) {
+		alert("You need to log in to reserve a house.");
+		return;
+	}
+
+	const userRef = doc(db, "users", user.uid);
+
+	try {
+		// Update user's document with the reserved house
+		await updateDoc(userRef, {
+			reservations: arrayUnion(houseId),
+		});
+
+		alert("House reserved successfully!");
+	} catch (error) {
+		console.error("Error reserving house:", error);
+
+		// If user document doesn't exist, create one with the reservation
+		if (error.code === "not-found") {
+			try {
+				await setDoc(userRef, {
+					reservations: [houseId],
+				});
+				alert("House reserved successfully!");
+			} catch (error) {
+				console.error("Error creating user document:", error);
+				alert("Failed to reserve the house. Please try again.");
+			}
+		} else {
+			alert("Failed to reserve the house. Please try again.");
+		}
+	}
+};
+
+// Add event listener for "Reservar" button
+document.addEventListener("click", (event) => {
+	if (event.target.classList.contains("reservar-btn")) {
+		const houseCard = event.target.closest(".popular__card");
+		const houseId = houseCard.dataset.id;
+
+		handleReservation(houseId);
+	}
 });
