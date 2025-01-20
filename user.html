@@ -38,12 +38,6 @@
                     <span class="text">Dados</span>
                 </a>
             </li>
-            <li>
-                <a href="#">
-                    <i class='bx bxs-shopping-bag-alt'></i>
-                    <span class="text">Casas</span>
-                </a>
-            </li>
         </ul>
         <ul class="side-menu">
             <li>
@@ -70,7 +64,6 @@
         <!-- NAVBAR -->
         <nav>
             <i class='bx bx-menu'></i>
-            <a href="#" class="nav-link">Categorias</a>
             <form action="#">
                 <div class="form-input">
                     <input type="search" placeholder="Search...">
@@ -205,13 +198,14 @@
             </div>
         </main>
 
+        <!-- Dados -->
         <main id="dadosSection">
             <div class="head-title">
                 <div class="left">
-                    <h1>Dados do Usuário</h1>
+                    <h1>Dados do Utilizador</h1>
                     <ul class="breadcrumb">
                         <li>
-                            <a href="#">Informações do usuário</a>
+                            <a href="#">Informações do Utilizador</a>
                         </li>
                     </ul>
                 </div>
@@ -224,7 +218,7 @@
                         <i class='bx bxs-user'></i>
                         <div class="text">
                             <h3 id="userName">Carregando...</h3>
-                            <p>Nome do Usuário</p>
+                            <p>Nome do Utilizador</p>
                         </div>
                     </div>
 
@@ -232,7 +226,7 @@
                         <i class='bx bx-mail-send'></i>
                         <div class="text">
                             <h3 id="userEmail">Carregando...</h3>
-                            <p>Email do Usuário</p>
+                            <p>Email do Utilizador</p>
                         </div>
                     </div>
 
@@ -245,9 +239,52 @@
                     </div>
                 </div>
             </div>
+
+            <div style="margin-top: 2rem;">
+                <div class="head-title">
+                    <div class="left">
+                        <h1>Casas</h1>
+                        <ul class="breadcrumb">
+                            <li>
+                                <a href="#">Casas reservadas e em espera</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="table-data" id="table-data-houses">
+                    <div class="order">
+                        <div class="head">
+                            <h3>Casas</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Titulo</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="housesTableBody">
+                                <tr>
+                                    <td>
+                                        <i class='bx bx-building-house'></i>
+                                        <!-- Nome da casa dinamico -->
+                                        <div id="house-info">
+                                            <p>Carregando informações...</p>
+                                        </div>
+                                    </td>
+                                    <!-- Status da casa -->
+                                    <td id="house-status"></td>
+                                    <!-- Status Aleatório -->
+                                    <td><span class="status completed">Completed</span></td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
         </main>
-
-
 
         <!-- MAIN -->
     </section>

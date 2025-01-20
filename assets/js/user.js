@@ -137,7 +137,7 @@ async function displayUserInfo(user) {
 		} else {
 			// If no document is found, display a fallback
 			userInfoContainer.innerHTML =
-				"<p>Usuário não encontrado no Firestore.</p>";
+				"<p>Utilizador não encontrado no Firestore.</p>";
 			lastLoginCell.innerHTML = "Nenhum login registrado";
 		}
 	} else {
@@ -225,7 +225,7 @@ onAuthStateChanged(auth, async (user) => {
 		});
 
 		if (userDoc) {
-			const firstName = userDoc.firstName || "Usuário";
+			const firstName = userDoc.firstName || "Utilizador";
 
 			// Dynamically add the welcome message
 			const profile = document.getElementById("profile");
@@ -515,7 +515,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 });
 
-/* =============== CHANGE TABS =============== */
 document.addEventListener("DOMContentLoaded", () => {
 	// Ensure that the main content area is loaded
 	const contentArea = document.querySelector("#content");
@@ -549,9 +548,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	// Get the links in the side menu
 	const dashboardLink = document.querySelector(".side-menu li:nth-child(1) a"); // Dashboard link
 	const dadosLink = document.querySelector(".side-menu li:nth-child(2) a"); // Dados link
-	const casasLink = document.querySelector(".side-menu li:nth-child(3) a"); // Casas link
 
-	if (!dashboardLink || !dadosLink || !casasLink) {
+	if (!dashboardLink || !dadosLink) {
 		console.error("One or more side menu links not found");
 		return;
 	}
@@ -575,16 +573,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		document.querySelector(".side-menu .active").classList.remove("active");
 		dadosLink.parentElement.classList.add("active");
 	});
-
-	// Event listener for Casas
-	casasLink.addEventListener("click", (e) => {
-		e.preventDefault(); // Prevent default link behavior
-		dashboardSection.style.display = "none"; // Hide dashboard content
-		dadosSection.style.display = "none"; // Hide Dados page
-		casasSection.style.display = "block"; // Show Casas page
-		document.querySelector(".side-menu .active").classList.remove("active");
-		casasLink.parentElement.classList.add("active");
-	});
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -602,7 +590,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	const dashboardLink = document.querySelector(".side-menu li:nth-child(1) a"); // Dashboard link
 	const dadosLink = document.querySelector(".side-menu li:nth-child(2) a"); // Dados link
-	const casasLink = document.querySelector(".side-menu li:nth-child(3) a"); // Casas link
 
 	// Event listener for Dashboard
 	dashboardLink.addEventListener("click", (e) => {
@@ -622,16 +609,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		casasSection.style.display = "none"; // Hide Casas page
 		document.querySelector(".side-menu .active").classList.remove("active");
 		dadosLink.parentElement.classList.add("active");
-	});
-
-	// Event listener for Casas
-	casasLink.addEventListener("click", (e) => {
-		e.preventDefault(); // Prevent default link behavior
-		dashboardSection.style.display = "none"; // Hide dashboard content
-		dadosSection.style.display = "none"; // Hide Dados page
-		casasSection.style.display = "block"; // Show Casas page
-		document.querySelector(".side-menu .active").classList.remove("active");
-		casasLink.parentElement.classList.add("active");
 	});
 });
 
@@ -682,3 +659,72 @@ displayVisitCount();
 // Example of triggering the login event (replace with actual login logic)
 const user = { email: "user@example.com" };
 logLoginEvent(user.email);
+
+// Fetch user reservations and display the houses
+async function displayReservedHouses(user) {
+	const tableBody = document.getElementById("housesTableBody"); // Referência à tabela de casas
+	const addedHouseIds = new Set(); // Rastrear casas já adicionadas
+
+	// Limpar as linhas existentes na tabela antes de adicionar novas
+	tableBody.innerHTML = "";
+
+	if (user) {
+		// Fetch the user document from Firestore
+		const userRef = collection(db, "users");
+		const querySnapshot = await getDocs(userRef);
+		let userDoc = null;
+
+		// Encontre o documento do utilizador logado
+		querySnapshot.forEach((doc) => {
+			if (doc.data().email === user.email) {
+				userDoc = doc.data();
+			}
+		});
+
+		// Verifique se o utilizador tem reservas
+		if (userDoc && userDoc.reservations) {
+			const reservations = userDoc.reservations; // IDs das casas reservadas
+
+			// Para cada ID de casa reservado, busque a casa correspondente na coleção "houses"
+			for (const houseId of reservations) {
+				const houseRef = doc(db, "houses", houseId);
+				const houseSnapshot = await getDoc(houseRef);
+
+				if (houseSnapshot.exists()) {
+					const house = houseSnapshot.data();
+
+					// Criação de uma nova linha na tabela para cada casa reservada
+					const row = document.createElement("tr");
+					row.innerHTML = `
+                        <td>
+                            <i class='bx bx-building-house'></i>
+                            <div id="house-info">
+                                <p>${house.title}</p> <!-- Exibe o título da casa -->
+                            </div>
+                        </td>
+                        <td><span class="status completed">Reservada</span></td>
+                    `;
+
+					// Adiciona a linha à tabela
+					tableBody.appendChild(row);
+					addedHouseIds.add(houseId); // Marca essa casa como adicionada
+				}
+			}
+		} else {
+			console.log("Não há reservas para este utilizador.");
+		}
+	} else {
+		// Caso o utilizador não esteja autenticado
+		console.error("Nenhum utilizador logado.");
+	}
+}
+
+// Função para verificar o estado de login do utilizador e carregar as reservas
+onAuthStateChanged(auth, (user) => {
+	if (user) {
+		// Carregar as casas reservadas para o utilizador
+		displayReservedHouses(user);
+	} else {
+		console.log("Nenhum utilizador está autenticado.");
+	}
+});

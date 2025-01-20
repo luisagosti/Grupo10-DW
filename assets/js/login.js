@@ -165,7 +165,7 @@ registerForm.addEventListener("submit", (e) => {
 		.then((userCredential) => {
 			const user = userCredential.user;
 
-			// Atualizar o nome no perfil do usuário
+			// Atualizar o nome no perfil do Utilizador
 			updateProfile(user, {
 				displayName: `${firstName} ${lastName}`,
 			})
@@ -203,7 +203,7 @@ registerForm.addEventListener("submit", (e) => {
 					Swal.fire({
 						icon: "error",
 						title: "Erro ao Atualizar Perfil",
-						text: "Ocorreu um erro ao tentar atualizar o nome do usuário.",
+						text: "Ocorreu um erro ao tentar atualizar o nome do Utilizador.",
 						confirmButtonText: "OK",
 					});
 				});
