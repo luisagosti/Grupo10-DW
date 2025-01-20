@@ -227,12 +227,14 @@ body.dark-theme {
 }
 
 .nav__logo {
-	/* color: white; */
+	color: var(--text-color);
 	display: inline-flex;
 	align-items: center;
 	column-gap: 0.25rem;
 	font-weight: var(--font-medium);
 	transform: 3s;
+	text-decoration: none;
+	font-size: larger;
 }
 
 .nav-logo i {
@@ -792,6 +794,8 @@ body.dark-theme {
 
 .footer__links {
 	row-gap: 0.5rem;
+	text-decoration: none;
+	color: var(--text-color);
 }
 
 .footer__link {

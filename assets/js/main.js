@@ -371,8 +371,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 							// Show SweetAlert on success
 							Swal.fire({
-								title: "Reservation Successful!",
-								text: "Your reservation was completed successfully.",
+								title: "Sucesso!",
+								text: "A sua reserva foi feita com sucesso.",
 								icon: "success",
 								confirmButtonText: "OK",
 							});
@@ -384,16 +384,16 @@ document.addEventListener("DOMContentLoaded", () => {
 						} catch (error) {
 							console.error("Error making reservation:", error);
 							Swal.fire({
-								title: "Reservation Failed",
-								text: "Please try again later.",
+								title: "Erro",
+								text: "Por favor tente mais tarde.",
 								icon: "error",
 								confirmButtonText: "OK",
 							});
 						}
 					} else {
 						Swal.fire({
-							title: "Not Logged In",
-							text: "Please log in to reserve a house.",
+							title: "Sessão Inciada",
+							text: "Por favor inicie sessão para reservar uma casa.",
 							icon: "warning",
 							confirmButtonText: "OK",
 						});
