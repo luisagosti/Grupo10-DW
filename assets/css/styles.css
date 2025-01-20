@@ -1391,3 +1391,146 @@ body.dark-theme {
 		opacity: 1;
 	}
 }
+
+/* =============== HOUSES POPUP =============== */
+/* Popup Styles */
+.popup {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	align-items: center;
+	justify-content: center;
+	z-index: var(--z-fixed);
+}
+
+.popup__content {
+	background-color: var(--body-color);
+	padding: 2rem;
+	border-radius: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 80%;
+	max-width: 900px;
+	height: 50%;
+	position: relative;
+	overflow: hidden;
+}
+
+.popup__close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 1.5rem;
+	cursor: pointer;
+	color: var(--first-color);
+}
+
+.popup__image {
+	width: 45%;
+	height: auto;
+	border-radius: 10px;
+	object-fit: cover;
+}
+
+.popup__details {
+	width: 50%;
+	padding-left: 1.5rem;
+}
+
+.popup__details h3 {
+	font-size: 2rem;
+	margin-bottom: 1rem;
+	font-weight: 600;
+	color: var(--title-color);
+}
+
+.popup-price {
+	font-size: var(--h2-font-size);
+	color: var(--text-color);
+}
+
+.popup__description {
+	font-size: 1.1rem;
+	margin: 0.5rem 0;
+	color: var(--text-color);
+}
+
+#popup-book-btn {
+	background-color: var(--first-color);
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1.2rem;
+	margin-top: 1rem;
+	transition: background-color 0.3s ease;
+}
+
+#popup-book-btn:hover {
+	background-color: var(--first-color-light);
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+	.popup__content {
+		flex-direction: column; /* Stack image and details vertically */
+		height: auto;
+		width: 90%;
+	}
+
+	.popup__image {
+		width: 100%; /* Image takes full width on smaller screens */
+		height: 200px; /* Set a fixed height for the image on mobile */
+		object-fit: cover;
+	}
+
+	.popup__details {
+		width: 100%; /* Details take full width */
+		padding-left: 0; /* Remove padding on smaller screens */
+		margin-top: 1rem;
+	}
+
+	.popup__details h3 {
+		font-size: 1.5rem; /* Reduce title font size on smaller screens */
+	}
+
+	.popup__description {
+		font-size: 1rem; /* Slightly smaller description text */
+	}
+
+	#popup-book-btn {
+		font-size: 1rem; /* Reduce button font size */
+		padding: 8px 16px; /* Adjust button padding for smaller screens */
+	}
+}
+
+/* Tablet View */
+@media screen and (max-width: 480px) {
+	.popup__content {
+		padding: 1rem; /* Less padding for mobile view */
+		width: 95%;
+	}
+
+	.popup__image {
+		height: 180px; /* Smaller image height on small devices */
+	}
+
+	.popup__details h3 {
+		font-size: 1.2rem; /* Smaller title size for mobile */
+	}
+
+	.popup__description {
+		font-size: 0.9rem; /* Smaller description font size */
+	}
+
+	#popup-book-btn {
+		font-size: 1rem; /* Adjust button font size */
+		padding: 6px 12px; /* Adjust button padding */
+	}
+}

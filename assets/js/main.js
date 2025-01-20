@@ -9,6 +9,8 @@ import {
 	getFirestore,
 	collection,
 	getDocs,
+	doc,
+	getDoc,
 } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
 
 // Firebase configuration (replace with your actual config)
@@ -285,4 +287,100 @@ acceptCookies.addEventListener("click", () => {
 declineCookies.addEventListener("click", () => {
 	sessionStorage.setItem("cookiesDeclined", "true"); // Save in session storage
 	cookiePopup.style.display = "none"; // Hide popup
+});
+
+// Testes
+document.addEventListener("DOMContentLoaded", () => {
+	const container = document.getElementById("houses-container");
+	const db = getFirestore(); // Firestore reference
+
+	// Reference to the 'houses' collection
+	const housesRef = collection(db, "houses");
+
+	// Fetch houses from Firestore
+	getDocs(housesRef)
+		.then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				const house = doc.data(); // Get data from Firestore document
+
+				// Create house card dynamically
+				const houseCard = `
+                    <article class="popular__card swiper-slide" data-id="${
+											doc.id
+										}">
+                        <img src="${house.image}" alt="${
+					house.title
+				}" class="popular__img">
+                        <div class="popular__data">
+                            <h2 class="popular__price">
+                                ${house.price.replace(
+																	"€",
+																	'<span class="euro-symbol">€</span>'
+																)}
+                            </h2>
+                            <h3 class="popular__title">${house.title}</h3>
+                            <p class="popular__description">${
+															house.location
+														}</p>
+                        </div>
+                    </article>
+                `;
+				container.innerHTML += houseCard;
+			});
+
+			// Initialize Swiper
+			const swiperPopular = new Swiper(".popular__container", {
+				spaceBetween: 32,
+				grabCursor: true,
+				centeredSlides: true,
+				slidesPerView: "auto",
+				loop: true,
+				navigation: {
+					nextEl: ".swiper-button-next",
+					prevEl: ".swiper-button-prev",
+				},
+			});
+		})
+		.catch((error) =>
+			console.error("Error loading houses from Firestore:", error)
+		);
+
+	// Add event listener for opening popup
+	document.getElementById("houses-container").addEventListener("click", (e) => {
+		// Only trigger for house cards
+		if (e.target.closest(".popular__card")) {
+			const houseId = e.target.closest(".popular__card").dataset.id;
+
+			// Fetch the house data again using the houseId
+			const houseRef = doc(db, "houses", houseId);
+			getDoc(houseRef)
+				.then((docSnapshot) => {
+					const house = docSnapshot.data();
+
+					// Set the data in the popup
+					document.getElementById("popup-title").innerText = house.title;
+					document.getElementById("popup-image").src = house.image;
+					document.getElementById("popup-description").innerText =
+						house.description;
+					document.getElementById("popup-price").innerText = house.price;
+					// Display the popup
+					document.getElementById("house-popup").style.display = "flex";
+				})
+				.catch((error) =>
+					console.error("Error fetching house details:", error)
+				);
+		}
+	});
+
+	// Close the popup when close button is clicked
+	document.getElementById("popup-close").addEventListener("click", () => {
+		document.getElementById("house-popup").style.display = "none";
+	});
+
+	// Optional: Close the popup if clicked outside of the content area
+	document.getElementById("house-popup").addEventListener("click", (e) => {
+		if (e.target === document.getElementById("house-popup")) {
+			document.getElementById("house-popup").style.display = "none";
+		}
+	});
 });
